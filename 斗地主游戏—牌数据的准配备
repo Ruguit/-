@@ -1,0 +1,116 @@
+/*
+*斗地主游戏： 1：做牌 2：洗牌 3：定义三个玩家 4：发牌 5：给玩家的牌排序 6：看每个玩家的牌
+*
+* */
+public class TestDamo {
+    //1:定义一个静态的集合来 存放牌类
+    public static List<Card> allCards=new ArrayList<>();
+    //2:定义静态代码块加载牌的数据
+    static{
+        String [] colo1=new String []{"3","4","5","6","7","8","9","10","J","O","K","A","2"};
+        String [] colo2=new String []{"♥","♠","♣","♦"};
+        int Index=0;
+        for(String size:colo1){
+            Index++;
+            for (String color:colo2) {
+                allCards.add(new Card(size,color,Index));
+            }
+        }
+        Card c1=new Card("","🃏",++Index);
+        Card c2=new Card("","🐅",++Index);
+        Collections.addAll(allCards,c1,c2);
+        System.out.println("新牌："+allCards);
+    }
+    public static void main(String[] args){
+        //3:洗牌
+        Collections.shuffle(allCards);
+        System.out.println("洗牌后"+allCards);
+
+        //4:定义三个玩家 三个集合容器
+        List<Card> A=new ArrayList<>();
+        List<Card> B=new ArrayList<>();
+        List<Card> C=new ArrayList<>();
+
+        //5:开始发牌，留三张做底牌，
+        for(int i=0;i<allCards.size()-3;i++){
+            Card c=allCards.get(i);
+            //使用轮循算法 %3
+            int num1=i%3;
+            if(num1==0){
+                //给A发牌
+                A.add(c);
+            }else if(num1==1){
+                //给B发牌
+                B.add(c);
+            }else if(num1==2){
+                //给C发牌
+                C.add(c);
+            }
+        }
+        //6:将最后三张牌截取成一个子集合；
+        List<Card> ListThreeCard=allCards.subList(allCards.size()-3,allCards.size());
+        //7:给玩家的牌从大到小排序
+        sortCards(A);
+        sortCards(B);
+        sortCards(C);
+        //8:看牌
+        List<List> all=new ArrayList<>();
+        String[]str={"A的牌是","B的牌是","C的牌是","最后三张牌是"};
+        Collections.addAll(all,A,B,C,ListThreeCard);//集合装集合
+        for (int i = 0; i <all.size() ; i++) {
+            System.out.println(str[i]+all.get(i));
+        }
+    }
+
+    /***
+     * 这是对牌经行从大到小排序的方法
+     * @param cards 这是被排序的牌组对象
+     */
+    public static void sortCards(List<Card>cards){
+        Collections.sort(cards, (o1,o2)-> {return o2.getIndex()- o1.getIndex();});
+    }
+}
+
+public class Card {
+    private String size;
+    private String color;
+    private int Index;//作为真正比较大小的的属性
+
+    public Card() {
+    }
+
+    public Card(String size, String color,int Index) {
+        this.size = size;
+        this.color = color;
+        this.Index=Index;
+    }
+
+    public int getIndex() {
+        return Index;
+    }
+
+    public void setIndex(int index) {
+        Index = index;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return color+size;
+    }
+}
