@@ -1,0 +1,172 @@
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+public class TestDano {
+    public static double ALLMONEY1=0;
+    public static double ALLMONEY2=0;
+    public static double ALLMONEY=0;
+
+    public static void main(String[] args) {
+        List<Emplyee> k1=new ArrayList<>();
+        k1.add(new Emplyee("A1","男",1234.5,70.0,"打架"));
+        k1.add(new Emplyee("A2","男",1224.5,10.0,"无"));
+        k1.add(new Emplyee("A3","男",1758.5,200.0,"无"));
+        k1.add(new Emplyee("A4","男",3828.5,120.0,"迟到"));
+        List<Emplyee> k2=new ArrayList<>();
+        k2.add(new Emplyee("B1","男",1258.5,210.0,"无"));
+        k2.add(new Emplyee("B2","男",1858.5,110.0,"无"));
+        k2.add(new Emplyee("B3","男",5758.5,80.0,"无"));
+        k2.add(new Emplyee("B4","男",3758.5,20.0,"迟到"));
+        k2.add(new Emplyee("B5","男",2758.5,300.0,"无"));
+
+        //1：筛选工资最高员工
+        //开发一
+        TToppreformer t1=k1.stream().max((e1, e2)->Double.compare(e1.getSalary()+e1.getBonus(),e2.getSalary()+e2.getBonus()))
+                .map(s->new TToppreformer(s.getName(),s.getSalary()+s.getBonus())).get();
+        System.out.println("开发一部门最佳员工是："+t1);
+        //开发二
+        TToppreformer t2=k2.stream().max((e1, e2)->Double.compare(e1.getSalary()+e1.getBonus(),e2.getSalary()+e2.getBonus()))
+                .map(s->new TToppreformer(s.getName(),s.getSalary()+s.getBonus())).get();
+        System.out.println("开发二部门最佳员工是："+t2);
+
+        //2:统计平均月收入 去掉最多与最少
+        //开发一
+        k1.stream().sorted((e1, e2)->Double.compare(e1.getSalary()+e1.getBonus(),e2.getSalary()+e2.getBonus()))
+                .skip(1).limit(k1.size()-2).forEach(s->{
+                    //统计总量
+                ALLMONEY1+=s.getSalary()+s.getBonus();
+                });
+        System.out.println("开发一部门的平均工资是"+ALLMONEY1/k1.size());
+        //开发二0
+        k2.stream().sorted((e1, e2)->Double.compare(e1.getSalary()+e1.getBonus(),e2.getSalary()+e2.getBonus()))
+                .skip(1).limit(k2.size()-2).forEach(s->{
+                    //统计总量
+                    ALLMONEY2+=s.getSalary()+s.getBonus();
+                });
+        System.out.println("开发二部门的平均工资是"+ALLMONEY2/k1.size());
+        //整体部门的平均工资
+        Stream<Emplyee> s1=k1.stream();
+        Stream<Emplyee> s2=k1.stream();
+        Stream<Emplyee> s3=Stream.concat(s1,s2);
+        s3.sorted((e1, e2)->Double.compare(e1.getSalary()+e1.getBonus(),e2.getSalary()+e2.getBonus()))
+                .skip(1).limit(k1.size()+ k2.size()-2).forEach(s->{
+                    ALLMONEY+=s.getSalary()+s.getBonus();
+                });
+        BigDecimal d1=BigDecimal.valueOf(ALLMONEY);
+        BigDecimal d2=BigDecimal.valueOf((k1.size()+ k2.size()-2));
+        BigDecimal d3=d1.divide(d2,2, RoundingMode.HALF_DOWN);
+        System.out.println("开发部门的平均工资是"+d3);
+        /*
+开发一部门最佳员工是：A4 3948.5
+开发二部门最佳员工是：B3 5838.5
+开发一部门的平均工资是815.75
+开发二部门的平均工资是2201.375
+开发部门的平均工资是2236.79
+        * */
+    }
+}
+class TToppreformer{
+    private String name;
+    private double money;
+
+    public TToppreformer() {
+    }
+
+    public TToppreformer(String name, double money) {
+        this.name = name;
+        this.money = money;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+    public String toString(){
+        return name+" "+money;
+    }
+}
+class Emplyee{
+    private String name;
+    private String sex;
+    private double salary;
+    private double bonus;
+    private String punish;
+
+    public Emplyee() {
+    }
+
+    public Emplyee(String name, String sex, double salary, double bonus, String punish) {
+        this.name = name;
+        this.sex = sex;
+        this.salary = salary;
+        this.bonus = bonus;
+        this.punish = punish;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public double getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(double bonus) {
+        this.bonus = bonus;
+    }
+
+    public String getPunish() {
+        return punish;
+    }
+
+    public void setPunish(String punish) {
+        this.punish = punish;
+    }
+
+    @Override
+    public String toString() {
+        return "Emplyee{" +
+                "name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", salary=" + salary +
+                ", bonus=" + bonus +
+                ", punish='" + punish + '\'' +
+                '}';
+    }
+}
+
